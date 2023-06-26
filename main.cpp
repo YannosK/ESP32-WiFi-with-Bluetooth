@@ -26,6 +26,7 @@ void setup() {
 void loop() {
   Serial.print("\nIP address: ");
   Serial.println(WiFi.localIP());
+  delay(1000);
 }
 
 void ConnectToWiFi(String WIFI_NETWORK, String WIFI_PASSWORD) {
