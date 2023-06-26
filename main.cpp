@@ -4,8 +4,7 @@
 /*
 const string WIFI_NETWORK = "BS_AP_Z_5_3"; //my ssid
 const string WIFI_PASSWORD = "kalosavvatokiriako2023"; //password
-*/
-/*
+
 String WIFI_NETWORK = "Dragonphoenix Inn"; //my ssid
 String WIFI_PASSWORD = "Elminister"; //password
 */
