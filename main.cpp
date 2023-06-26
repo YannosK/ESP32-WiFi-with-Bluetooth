@@ -24,21 +24,19 @@ void setup() {
   String WiFi_ssid;
   String WiFi_pswd;
 
-  Serial.print("Add WiFi SSID: ");
+  Serial.print("\nAdd WiFi SSID: ");
   while(!Serial.available()){
     delay(1);
   }
   WiFi_ssid = Serial.readStringUntil('\n');
-  Serial.println("\n");
-  Serial.println(WiFi_ssid);
+  Serial.println(WiFi_ssid.c_str());
 
-  Serial.print("Add WiFi password: ");
+  Serial.print("\nAdd WiFi password: ");
   while(!Serial.available()){
     delay(1);
   }
-  WiFi_ssid = Serial.readStringUntil('\n');
-  Serial.println("\n"); 
-  Serial.println(WiFi_pswd); 
+  WiFi_ssid = Serial.readStringUntil('\n'); 
+  Serial.println(WiFi_pswd.c_str()); 
 
   ConnectToWiFi(WiFi_ssid, WiFi_pswd);
 }
