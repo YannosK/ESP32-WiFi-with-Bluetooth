@@ -54,11 +54,15 @@ void setup() {
   while(!SerialBT.available()){
     delay(1);
   }
-  Serial.readBytes(WiFi_ssid, sizeof(WiFi_ssid));
+  SerialBT.readBytes(WiFi_ssid, sizeof(WiFi_ssid));
   WiFi_ssid[sizeof(WiFi_ssid) - 1] = '\0';
+  WiFi_ssid[strcspn(WiFi_ssid, "\r")] = '\0';
+  /*
+  // alternate way to trim char[] is to make it String
   String ssidString = WiFi_ssid;
-  ssidString.trim();  // Remove leading/trailing whitespaces
+  ssidString.trim();
   ssidString.toCharArray(WiFi_ssid, sizeof(WiFi_ssid));
+  */
   Serial.print("\nWiFi_ssid: ");
   Serial.println(WiFi_ssid);
 
@@ -66,11 +70,15 @@ void setup() {
   while(!SerialBT.available()){
     delay(1);
   }
-  Serial.readBytes(WiFi_pswd, sizeof(WiFi_pswd));
+  SerialBT.readBytes(WiFi_pswd, sizeof(WiFi_pswd));
   WiFi_pswd[sizeof(WiFi_pswd) - 1] = '\0';
+  WiFi_pswd[strcspn(WiFi_pswd, "\r")] = '\0';
+  /*
+  // alternate way to trim char[] is to make it String
   String pswdString = WiFi_pswd;
   pswdString.trim();  // Remove leading/trailing whitespaces
   pswdString.toCharArray(WiFi_pswd, sizeof(WiFi_pswd));
+  */
   Serial.print("\nWiFi_pswd: ");
   Serial.println(WiFi_pswd);
 
