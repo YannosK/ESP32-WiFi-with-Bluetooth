@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <WiFi.h>
+#include <BluetoothSerial.h>
 
 /*
 const string WIFI_NETWORK = "BS_AP_Z_5_3"; //my ssid
