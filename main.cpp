@@ -34,21 +34,16 @@ void setup() {
   Serial.begin(115200);
   SerialBT.begin("YannosESP32"); //device name
 
-  //initialisation
-  SerialBT.println("You are connected to ESP32.\nPlease send nothing and wait for a moment.");
-  int i=0;
-  int dump;
-  while(i<5) {
-    delay(1000);
-    dump = SerialBT.read();
-    i++;
-  }
+  Serial.println("Wait until someone sends something via Bluetooth");
 
-  //getting rid of the first messages both in the serial and Bluetooth monitor
-  if(SerialBT.available()){
-    Serial.print("Dumping BT data:");
-    Serial.println(dump);
-    SerialBT.print("Dumping data:");
+  while(!SerialBT.available()){}
+  Serial.println("BT initialised");
+
+  //initialisation
+  SerialBT.println("Dumping BT data:");
+  char dump[32];
+  if (SerialBT.available()) {
+    SerialBT.readBytes(dump, sizeof(dump));
     SerialBT.println(dump);
   }
 
@@ -61,7 +56,8 @@ void setup() {
   }
   SerialBT.readBytes(WiFi_ssid, sizeof(WiFi_ssid));
   WiFi_ssid[sizeof(WiFi_ssid) - 1] = '\0';
-  //Serial.println(WiFi_ssid);
+  Serial.print("WiFi_ssid: ");
+  Serial.println(WiFi_ssid);
 
   SerialBT.print("\nAdd WiFi password: ");
   while(!SerialBT.available()){
@@ -69,7 +65,8 @@ void setup() {
   }
   SerialBT.readBytes(WiFi_pswd, sizeof(WiFi_pswd));
   WiFi_pswd[sizeof(WiFi_pswd) - 1] = '\0';
-  //Serial.println(WiFi_ssid);
+  Serial.print("WiFi_pswd: ");
+  Serial.println(WiFi_pswd);
 
   ConnectToWiFi_BT(WiFi_ssid, WiFi_pswd);
 }
@@ -85,7 +82,7 @@ void loop() {
 
  //It's a good practice to use const when the function does not intend to modify the string data
 void ConnectToWiFi_BT(const char* WIFI_NETWORK, const char* WIFI_PASSWORD) {
-  SerialBT.println("Connecting to WiFi");
+  SerialBT.print("Connecting to WiFi");
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_NETWORK, WIFI_PASSWORD);
