@@ -13,14 +13,11 @@ String WIFI_NETWORK = "ARTINA WIFI "; //my ssid
 String WIFI_PASSWORD = ""; //password
 */
 
-void ConnectToWiFi_BT(String WIFI_NETWORK, String WIFI_PASSWORD);
-
-IPAddress staticIP(192, 168, 100, 45);
-IPAddress gateway(192, 168, 100, 1);         
-IPAddress subnet(255, 255, 255, 0);
+void ConnectToWiFi_BT(const char* WIFI_NETWORK, const char* WIFI_PASSWORD);
 
 int status = WL_IDLE_STATUS;
 
+/*
 //checking if BT is properly enabled
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
@@ -28,6 +25,7 @@ int status = WL_IDLE_STATUS;
 #if !defined(CONFIG_BT_SPP_ENABLED)
 #error Serial Bluetooth not available or not enabled. It is only available for the ESP32 chip.
 #endif
+*/
 
 BluetoothSerial SerialBT; //instance of BluetoothSerial
 
@@ -39,14 +37,13 @@ void setup() {
   //initialisation
   SerialBT.println("You are connected to ESP32.\nPlease send nothing and wait for a moment.");
   int i=0;
-  String dump;
+  int dump;
   while(i<5) {
-    SerialBT.print(".");
     delay(1000);
-    dump = SerialBT.readString();
+    dump = SerialBT.read();
     i++;
   }
-  SerialBT.print("\n");
+
   //getting rid of the first messages both in the serial and Bluetooth monitor
   if(SerialBT.available()){
     Serial.print("Dumping BT data:");
@@ -55,24 +52,24 @@ void setup() {
     SerialBT.println(dump);
   }
 
-  String WiFi_ssid;
-  String WiFi_pswd;
+  char WiFi_ssid[32];
+  char WiFi_pswd[32];
 
   SerialBT.print("\nAdd WiFi SSID: ");
   while(!SerialBT.available()){
     delay(1);
   }
-  WiFi_ssid = SerialBT.readString();
-  WiFi_ssid.trim();
-  Serial.println(WiFi_ssid.c_str());
+  SerialBT.readBytes(WiFi_ssid, sizeof(WiFi_ssid));
+  WiFi_ssid[sizeof(WiFi_ssid) - 1] = '\0';
+  //Serial.println(WiFi_ssid);
 
   SerialBT.print("\nAdd WiFi password: ");
   while(!SerialBT.available()){
     delay(1);
   }
-  WiFi_pswd = SerialBT.readString();
-  WiFi_pswd.trim();
-  Serial.println(WiFi_pswd.c_str()); 
+  SerialBT.readBytes(WiFi_pswd, sizeof(WiFi_pswd));
+  WiFi_pswd[sizeof(WiFi_pswd) - 1] = '\0';
+  //Serial.println(WiFi_ssid);
 
   ConnectToWiFi_BT(WiFi_ssid, WiFi_pswd);
 }
@@ -85,13 +82,13 @@ void loop() {
   delay(1000);
 }
 
-void ConnectToWiFi_BT(String WIFI_NETWORK, String WIFI_PASSWORD) {
+
+ //It's a good practice to use const when the function does not intend to modify the string data
+void ConnectToWiFi_BT(const char* WIFI_NETWORK, const char* WIFI_PASSWORD) {
   SerialBT.println("Connecting to WiFi");
 
   WiFi.mode(WIFI_STA);
-
-  SerialBT.println("\nTrying to get an IP address using DHCP");
-  WiFi.begin(WIFI_NETWORK.c_str(), WIFI_PASSWORD.c_str());
+  WiFi.begin(WIFI_NETWORK, WIFI_PASSWORD);
   
   while (WiFi.status() != WL_CONNECTED){
     SerialBT.print(".");
@@ -99,17 +96,7 @@ void ConnectToWiFi_BT(String WIFI_NETWORK, String WIFI_PASSWORD) {
   }
 
   if (WiFi.status() != WL_CONNECTED){
-    SerialBT.println("DHCP failed. Initialize with static IP");
-    WiFi.config(staticIP, gateway, subnet);
-
-    while (WiFi.status() != WL_CONNECTED){
-    SerialBT.print(".");
-    delay(500);
-    }
-
-     if (WiFi.status() != WL_CONNECTED) {
-      SerialBT.println("Connection failed!");
-     }
+    SerialBT.println("Connection failed!");
   }
   else{
     SerialBT.print("\nConected to WiFi network with local IP address:");
