@@ -7,6 +7,9 @@ const string WIFI_PASSWORD = "kalosavvatokiriako2023"; //password
 
 String WIFI_NETWORK = "Dragonphoenix Inn"; //my ssid
 String WIFI_PASSWORD = "Elminister"; //password
+
+String WIFI_NETWORK = "ARTINA WIFI "; //my ssid
+String WIFI_PASSWORD = ""; //password
 */
 
 void ConnectToWiFi(String WIFI_NETWORK, String WIFI_PASSWORD);
@@ -28,14 +31,16 @@ void setup() {
   while(!Serial.available()){
     delay(1);
   }
-  WiFi_ssid = Serial.readStringUntil('\n');
+  WiFi_ssid = Serial.readString();
+  WiFi_ssid.trim();
   Serial.println(WiFi_ssid.c_str());
 
   Serial.print("\nAdd WiFi password: ");
   while(!Serial.available()){
     delay(1);
   }
-  WiFi_ssid = Serial.readStringUntil('\n'); 
+  WiFi_pswd = Serial.readString();
+  WiFi_pswd.trim();
   Serial.println(WiFi_pswd.c_str()); 
 
   ConnectToWiFi(WiFi_ssid, WiFi_pswd);
