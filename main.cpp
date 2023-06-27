@@ -54,18 +54,24 @@ void setup() {
   while(!SerialBT.available()){
     delay(1);
   }
-  SerialBT.readBytes(WiFi_ssid, sizeof(WiFi_ssid));
+  Serial.readBytes(WiFi_ssid, sizeof(WiFi_ssid));
   WiFi_ssid[sizeof(WiFi_ssid) - 1] = '\0';
-  Serial.print("WiFi_ssid: ");
+  String ssidString = WiFi_ssid;
+  ssidString.trim();  // Remove leading/trailing whitespaces
+  ssidString.toCharArray(WiFi_ssid, sizeof(WiFi_ssid));
+  Serial.print("\nWiFi_ssid: ");
   Serial.println(WiFi_ssid);
 
   SerialBT.print("\nAdd WiFi password: ");
   while(!SerialBT.available()){
     delay(1);
   }
-  SerialBT.readBytes(WiFi_pswd, sizeof(WiFi_pswd));
+  Serial.readBytes(WiFi_pswd, sizeof(WiFi_pswd));
   WiFi_pswd[sizeof(WiFi_pswd) - 1] = '\0';
-  Serial.print("WiFi_pswd: ");
+  String pswdString = WiFi_pswd;
+  pswdString.trim();  // Remove leading/trailing whitespaces
+  pswdString.toCharArray(WiFi_pswd, sizeof(WiFi_pswd));
+  Serial.print("\nWiFi_pswd: ");
   Serial.println(WiFi_pswd);
 
   ConnectToWiFi_BT(WiFi_ssid, WiFi_pswd);
