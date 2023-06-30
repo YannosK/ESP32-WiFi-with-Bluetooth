@@ -1,18 +1,26 @@
+/*
+BON STUDIO
+"BS_AP_Z_5_3"
+"kalosavvatokiriako2023"
+
+PEDRO
+"MyrDyn"
+"M90b53M98pj62@"
+
+ARTINA
+"ARTINA WIFI"
+""
+
+DRAGONPHOENIX
+"Dragonphoenix Inn"
+"Elminister"
+*/
 #include <Arduino.h>
 #include <WiFi.h>
 #include <BluetoothSerial.h>
 
-/*
-const string WIFI_NETWORK = "BS_AP_Z_5_3"; //my ssid
-const string WIFI_PASSWORD = "kalosavvatokiriako2023"; //password
-
-String WIFI_NETWORK = "Dragonphoenix Inn"; //my ssid
-String WIFI_PASSWORD = "Elminister"; //password
-
-String WIFI_NETWORK = "ARTINA WIFI "; //my ssid
-String WIFI_PASSWORD = ""; //password
-*/
-
+void BluetoothInitialize();
+void WifiCredentialsViaSerial(char WiFi_network[], char WiFi_password[]);
 void ConnectToWiFi_BT(const char* WIFI_NETWORK, const char* WIFI_PASSWORD);
 
 int status = WL_IDLE_STATUS;
@@ -26,7 +34,6 @@ int status = WL_IDLE_STATUS;
 #error Serial Bluetooth not available or not enabled. It is only available for the ESP32 chip.
 #endif
 */
-
 BluetoothSerial SerialBT; //instance of BluetoothSerial
 
 
@@ -34,56 +41,15 @@ void setup() {
   Serial.begin(115200);
   SerialBT.begin("YannosESP32"); //device name
 
-  Serial.println("Wait until someone sends something via Bluetooth");
+  BluetoothInitialize();
 
-  while(!SerialBT.available()){}
-  Serial.println("BT initialised");
+  char WiFi_ssid[32], WiFi_pswd[32];
 
-  //initialisation
-  SerialBT.println("Dumping BT data:");
-  char dump[32];
-  if (SerialBT.available()) {
-    SerialBT.readBytes(dump, sizeof(dump));
-    SerialBT.println(dump);
-  }
-
-  char WiFi_ssid[32];
-  char WiFi_pswd[32];
-
-  SerialBT.print("\nAdd WiFi SSID: ");
-  while(!SerialBT.available()){
-    delay(1);
-  }
-  SerialBT.readBytes(WiFi_ssid, sizeof(WiFi_ssid));
-  /*
-  WiFi_ssid[sizeof(WiFi_ssid) - 1] = '\0';
-  WiFi_ssid[strcspn(WiFi_ssid, "\r")] = '\0';
-  */
-  // alternate way to trim char[] is to make it String
-  String ssidString = WiFi_ssid;
-  ssidString.trim();
-  ssidString.toCharArray(WiFi_ssid, sizeof(WiFi_ssid));  
-  Serial.print("\nWiFi_ssid: ");
-  Serial.println(WiFi_ssid);
-
-  SerialBT.print("\nAdd WiFi password: ");
-  while(!SerialBT.available()){
-    delay(1);
-  }
-  SerialBT.readBytes(WiFi_pswd, sizeof(WiFi_pswd));
-  /*
-  WiFi_pswd[sizeof(WiFi_pswd) - 1] = '\0';
-  WiFi_pswd[strcspn(WiFi_pswd, "\r")] = '\0';
-  */
-  // alternate way to trim char[] is to make it String
-  String pswdString = WiFi_pswd;
-  pswdString.trim();
-  pswdString.toCharArray(WiFi_pswd, sizeof(WiFi_pswd));  
-  Serial.print("\nWiFi_pswd: ");
-  Serial.println(WiFi_pswd);
+  WifiCredentialsViaSerial(WiFi_ssid, WiFi_pswd);
 
   ConnectToWiFi_BT(WiFi_ssid, WiFi_pswd);
 }
+
 
 void loop() {
   Serial.print("\nIP address: ");
@@ -94,8 +60,25 @@ void loop() {
 }
 
 
- //It's a good practice to use const when the function does not intend to modify the string data
-void ConnectToWiFi_BT(const char* WIFI_NETWORK, const char* WIFI_PASSWORD) {
+void BluetoothInitialize()
+{
+  Serial.println("Wait until someone sends something via Bluetooth");
+  while(!SerialBT.available()){}
+  Serial.println("BT initialised");
+  //initialisation
+  SerialBT.println("Dumping BT data:");
+  char dump[32];
+  if (SerialBT.available()) {
+    SerialBT.readBytes(dump, sizeof(dump));
+    SerialBT.println(dump);
+  }
+}
+
+
+
+void ConnectToWiFi_BT(const char* WIFI_NETWORK, const char* WIFI_PASSWORD) 
+//It's a good practice to use const when the function does not intend to modify the string data
+{
   SerialBT.print("Connecting to WiFi");
 
   WiFi.mode(WIFI_STA);
@@ -113,4 +96,32 @@ void ConnectToWiFi_BT(const char* WIFI_NETWORK, const char* WIFI_PASSWORD) {
     SerialBT.print("\nConected to WiFi network with local IP address:");
     SerialBT.println(WiFi.localIP()); 
   }
+}
+
+
+void WifiCredentialsViaSerial(char WiFi_network[], char WiFi_password[])
+{
+  SerialBT.print("\nAdd WiFi SSID: ");
+  while(!Serial.available()){
+    delay(1);
+  }
+  SerialBT.readBytes(WiFi_network, 32);
+  WiFi_network[31] = '\0';
+  String ssidString = WiFi_network;
+  ssidString.trim();  
+  ssidString.toCharArray(WiFi_network, 32);
+  Serial.print("\nWiFi_network: ");
+  Serial.println(WiFi_network);
+
+  SerialBT.print("\nAdd WiFi password: ");
+  while(!Serial.available()){
+    delay(1);
+  }
+  SerialBT.readBytes(WiFi_password, 32);
+  WiFi_password[31] = '\0';
+  String pswdString = WiFi_password;
+  pswdString.trim(); 
+  pswdString.toCharArray(WiFi_password, 32);
+  Serial.print("\nWiFi_password: ");
+  Serial.println(WiFi_password);
 }
