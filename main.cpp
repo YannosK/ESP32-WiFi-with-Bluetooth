@@ -75,7 +75,6 @@ void BluetoothInitialize()
 }
 
 
-
 void ConnectToWiFi_BT(const char* WIFI_NETWORK, const char* WIFI_PASSWORD) 
 //It's a good practice to use const when the function does not intend to modify the string data
 {
