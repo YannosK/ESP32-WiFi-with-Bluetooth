@@ -24,6 +24,8 @@ void WifiCredentialsViaSerial(char WiFi_network[], char WiFi_password[]);
 void ConnectToWiFi_BT(const char* WIFI_NETWORK, const char* WIFI_PASSWORD);
 
 int status = WL_IDLE_STATUS;
+char WiFi_ssid[32];
+char WiFi_pswd[32];
 
 /*
 //checking if BT is properly enabled
@@ -41,22 +43,23 @@ void setup() {
   Serial.begin(115200);
   SerialBT.begin("YannosESP32"); //device name
 
-  BluetoothInitialize();
+  //BluetoothInitialize();  
 
-  char WiFi_ssid[32], WiFi_pswd[32];
+  //WifiCredentialsViaSerial(WiFi_ssid, WiFi_pswd);
 
-  WifiCredentialsViaSerial(WiFi_ssid, WiFi_pswd);
-
-  ConnectToWiFi_BT(WiFi_ssid, WiFi_pswd);
+  //ConnectToWiFi_BT(WiFi_ssid, WiFi_pswd);
 }
 
 
 void loop() {
-  Serial.print("\nIP address: ");
-  Serial.println(WiFi.localIP());
-  SerialBT.print("\nIP address: ");
-  SerialBT.println(WiFi.localIP());
-  delay(1000);
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    Serial.print("\nWiFi_network: ");
+    Serial.println(WiFi_ssid);
+    Serial.print("\nWiFi_password: ");
+    Serial.println(WiFi_pswd);
+    delay(1000);
+  }
 }
 
 
