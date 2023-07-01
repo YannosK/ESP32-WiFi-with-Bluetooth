@@ -36,29 +36,32 @@ char WiFi_pswd[32];
 #error Serial Bluetooth not available or not enabled. It is only available for the ESP32 chip.
 #endif
 */
-BluetoothSerial SerialBT; //instance of BluetoothSerial
+BluetoothSerial SerialBT;
 
 
 void setup() {
   Serial.begin(115200);
-  SerialBT.begin("YannosESP32"); //device name
-
-  //BluetoothInitialize();  
-
-  //WifiCredentialsViaSerial(WiFi_ssid, WiFi_pswd);
-
-  //ConnectToWiFi_BT(WiFi_ssid, WiFi_pswd);
+  SerialBT.begin("YannosESP32");
 }
 
 
 void loop() {
-  while (WiFi.status() != WL_CONNECTED)
+  while (WiFi.status() == WL_CONNECTED)
   {
     Serial.print("\nWiFi_network: ");
     Serial.println(WiFi_ssid);
     Serial.print("\nWiFi_password: ");
     Serial.println(WiFi_pswd);
     delay(1000);
+  }
+
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    BluetoothInitialize();  
+
+    WifiCredentialsViaSerial(WiFi_ssid, WiFi_pswd);
+
+    ConnectToWiFi_BT(WiFi_ssid, WiFi_pswd);
   }
 }
 
