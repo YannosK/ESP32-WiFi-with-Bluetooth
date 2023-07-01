@@ -81,29 +81,6 @@ void BluetoothInitialize()
 }
 
 
-void ConnectToWiFi_BT(const char* WIFI_NETWORK, const char* WIFI_PASSWORD) 
-//It's a good practice to use const when the function does not intend to modify the string data
-{
-  SerialBT.print("Connecting to WiFi");
-
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_NETWORK, WIFI_PASSWORD);
-  
-  while (WiFi.status() != WL_CONNECTED){
-    SerialBT.print(".");
-    delay(500);
-  }
-
-  if (WiFi.status() != WL_CONNECTED){
-    SerialBT.println("Connection failed!");
-  }
-  else{
-    SerialBT.print("\nConected to WiFi network with local IP address:");
-    SerialBT.println(WiFi.localIP()); 
-  }
-}
-
-
 void WifiCredentialsViaSerial(char WiFi_network[], char WiFi_password[])
 {
   SerialBT.print("\nAdd WiFi SSID: ");
@@ -129,4 +106,27 @@ void WifiCredentialsViaSerial(char WiFi_network[], char WiFi_password[])
   pswdString.toCharArray(WiFi_password, 32);
   Serial.print("\nWiFi_password: ");
   Serial.println(WiFi_password);
+}
+
+
+void ConnectToWiFi_BT(const char* WIFI_NETWORK, const char* WIFI_PASSWORD) 
+//It's a good practice to use const when the function does not intend to modify the string data
+{
+  SerialBT.print("Connecting to WiFi");
+
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_NETWORK, WIFI_PASSWORD);
+  
+  while (WiFi.status() != WL_CONNECTED){
+    SerialBT.print(".");
+    delay(500);
+  }
+
+  if (WiFi.status() != WL_CONNECTED){
+    SerialBT.println("Connection failed!");
+  }
+  else{
+    SerialBT.print("\nConected to WiFi network with local IP address:");
+    SerialBT.println(WiFi.localIP()); 
+  }
 }
