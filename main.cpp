@@ -16,12 +16,10 @@ DRAGONPHOENIX
 "Elminister"
 */
 #include <Arduino.h>
-#include <WiFi.h>
-#include <BluetoothSerial.h>
 
 void BluetoothInitialize();
 void WifiCredentialsViaSerial(char WiFi_network[], char WiFi_password[]);
-void ConnectToWiFi_BT(const char* WIFI_NETWORK, const char* WIFI_PASSWORD);
+void ConnectToWiFi_BT(const char *WIFI_NETWORK, const char *WIFI_PASSWORD);
 
 int status = WL_IDLE_STATUS;
 char WiFi_ssid[32];
@@ -38,14 +36,14 @@ char WiFi_pswd[32];
 */
 BluetoothSerial SerialBT;
 
-
-void setup() {
+void setup()
+{
   Serial.begin(115200);
   SerialBT.begin("YannosESP32");
 }
 
-
-void loop() {
+void loop()
+{
   while (WiFi.status() == WL_CONNECTED)
   {
     Serial.print("\nWiFi_network: ");
@@ -57,7 +55,7 @@ void loop() {
 
   while (WiFi.status() != WL_CONNECTED)
   {
-    BluetoothInitialize();  
+    BluetoothInitialize();
 
     WifiCredentialsViaSerial(WiFi_ssid, WiFi_pswd);
 
@@ -65,68 +63,73 @@ void loop() {
   }
 }
 
-
 void BluetoothInitialize()
 {
   Serial.println("Wait until someone sends something via Bluetooth");
-  while(!SerialBT.available()){}
+  while (!SerialBT.available())
+  {
+  }
   Serial.println("BT initialised");
-  //initialisation
+  // initialisation
   SerialBT.println("Dumping BT data:");
   char dump[32];
-  if (SerialBT.available()) {
+  if (SerialBT.available())
+  {
     SerialBT.readBytes(dump, sizeof(dump));
     SerialBT.println(dump);
   }
 }
 
-
 void WifiCredentialsViaSerial(char WiFi_network[], char WiFi_password[])
 {
   SerialBT.print("\nAdd WiFi SSID: ");
-  while(!Serial.available()){
+  while (!Serial.available())
+  {
     delay(1);
   }
   SerialBT.readBytes(WiFi_network, 32);
   WiFi_network[31] = '\0';
   String ssidString = WiFi_network;
-  ssidString.trim();  
+  ssidString.trim();
   ssidString.toCharArray(WiFi_network, 32);
   Serial.print("\nWiFi_network: ");
   Serial.println(WiFi_network);
 
   SerialBT.print("\nAdd WiFi password: ");
-  while(!Serial.available()){
+  while (!Serial.available())
+  {
     delay(1);
   }
   SerialBT.readBytes(WiFi_password, 32);
   WiFi_password[31] = '\0';
   String pswdString = WiFi_password;
-  pswdString.trim(); 
+  pswdString.trim();
   pswdString.toCharArray(WiFi_password, 32);
   Serial.print("\nWiFi_password: ");
   Serial.println(WiFi_password);
 }
 
-
-void ConnectToWiFi_BT(const char* WIFI_NETWORK, const char* WIFI_PASSWORD) 
-//It's a good practice to use const when the function does not intend to modify the string data
+void ConnectToWiFi_BT(const char *WIFI_NETWORK, const char *WIFI_PASSWORD)
+// It's a good practice to use const when the function does not intend to modify the string data
 {
   SerialBT.print("Connecting to WiFi");
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_NETWORK, WIFI_PASSWORD);
-  
-  while (WiFi.status() != WL_CONNECTED){
+
+  while (WiFi.status() != WL_CONNECTED)
+  {
     SerialBT.print(".");
     delay(500);
   }
 
-  if (WiFi.status() != WL_CONNECTED){
+  if (WiFi.status() != WL_CONNECTED)
+  {
     SerialBT.println("Connection failed!");
   }
-  else{
+  else
+  {
     SerialBT.print("\nConected to WiFi network with local IP address:");
-    SerialBT.println(WiFi.localIP()); 
+    SerialBT.println(WiFi.localIP());
   }
 }
